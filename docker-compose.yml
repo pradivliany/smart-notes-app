@@ -1,5 +1,3 @@
-version: "3.9"  # Syntax version od Docker Compose
-
 services: # Start of services block: all containers we want to run simultaneously
   db: # Service (container) name
     image: postgres:15  # Official PostgreSQL image version 15
