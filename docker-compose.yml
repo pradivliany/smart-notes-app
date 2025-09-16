@@ -1,0 +1,17 @@
+version: "3.9"  # Syntax version od Docker Compose
+
+services: # Start of services block: all containers we want to run simultaneously
+  db: # Service (container) name
+    image: postgres:15  # Official PostgreSQL image version 15
+    restart: always  # Always restart container if it stops
+    environment: # Environmental variables to initialize database
+      POSTGRES_DB: ${POSTGRES_DB}  # Database name (will be created after starting docker container)
+      POSTGRES_USER: ${POSTGRES_USER}  # Database user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Password for the database user
+    ports:
+      - "${POSTGRES_PORT}:5432"  # Map port 5432 on host to port 5432 in the container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # <name of data storage(volume) on host>:<Path inside container to store data>
+
+volumes:  # Define named data storages(volumes) outside of services
+  postgres_data:  # This creates the named volume 'postgres_data' (example Windows path: C:\ProgramData\Docker\volumes\postgres_data\_data)
