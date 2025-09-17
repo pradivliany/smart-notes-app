@@ -1,9 +1,10 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.db import models
 from PIL import Image
 
 
-class UserProfile(AbstractUser):
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(
         default="avatars/default_avatar.jpg", upload_to="avatars/"
     )
@@ -11,7 +12,7 @@ class UserProfile(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.username}"
+        return f"{self.user.username}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
