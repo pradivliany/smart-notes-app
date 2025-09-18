@@ -2,9 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <!-- Logo and name (left) -->
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo" width="30" height="24"
+                 class="d-inline-block align-text-top">
+            Notes
+        </a>
+
+        <!-- Right-side menu -->
+        {% if user.is_authenticated %}
+        <div class="btn-group ms-auto">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                {{ user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">My Profile</a></li>
+                <li><a class="dropdown-item" href="#">Add Note</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Logout</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="btn-group ms-auto">
+            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                Account
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Login</a></li>
+                <li><a class="dropdown-item" href="#">SignUp</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer class="bg-light text-center text-dark py-3 mt-auto">
+    <div class="container">
+        <p class="mb-0">© 2025 Notes App</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
 </html>
