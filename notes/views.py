@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 
-def welcome_page(request):
+def index_view(request):
+    if request.user.is_authenticated:
+        return redirect(to="notes_app:note_list")
+
     return render(request, "welcome.html")
