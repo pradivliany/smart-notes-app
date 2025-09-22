@@ -27,9 +27,10 @@ def login_user(request):
         return redirect(to="notes_app:note_list")
 
     if request.method == "POST":
-        form = LoginForm(request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = authenticate(
+                request,
                 username=form.cleaned_data["username"],
                 password=form.cleaned_data["password"],
             )
