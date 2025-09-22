@@ -29,16 +29,8 @@ def login_user(request):
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
-            user = authenticate(
-                request,
-                username=form.cleaned_data["username"],
-                password=form.cleaned_data["password"],
-            )
-            if user:
-                login(request, user)
-                return redirect(to="notes_app:note_list")
-            else:
-                messages.error(request, "Username or password did not match")
+            login(request, form.get_user())
+            return redirect(to="notes_app:note_list")
         return render(request, "users_app/login.html", {"form": form})
 
     # request.method == "GET"
