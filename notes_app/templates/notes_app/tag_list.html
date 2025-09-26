@@ -1,5 +1,22 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
+
+{% block title %}My Tags{% endblock %}
+
 {% block content %}
-<p>This is page to show all tags</p>
+
+<ul class="list-group">
+    {% for tag in tags %}
+        <li class="list-group-item">
+            <span class="btn btn-secondary">{{ tag.name }}</span>
+            <a href="{% url 'notes_app:tag_delete' tag.id %}" class="btn btn-danger">Delete</a>
+        </li>
+
+    {% endfor %}
+</ul>
+<hr>
+<div class="grid">
+    <a class="btn btn-primary" href="{% url 'notes_app:note_list' %}" role="button">My Notes</a>
+    <a class="btn btn-primary" href="{% url 'notes_app:tag_create' %}" role="button">Add Tag</a>
+</div>
+
 {% endblock %}

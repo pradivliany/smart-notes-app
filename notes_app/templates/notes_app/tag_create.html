@@ -1,5 +1,20 @@
 {% extends "base.html" %}
+
 {% block title %}Tag{% endblock %}
+
 {% block content %}
-<p>This is page to create tag</p>
+
+<form method="post" action="{% url 'notes_app:tag_create' %}">
+    {% csrf_token %}
+    <div>
+        <label>Type the name of new tag: {{ form.name }}</label>
+        <span>{{ form.errors.name }}</span>
+    </div>
+    <div class="grid">
+        <button type="submit" name="save" value="Save">Save</button>
+        <button type="submit" name="save_and_add" value="Save and add new">Save and add new</button>
+    </div>
+</form>
+
 {% endblock %}
+

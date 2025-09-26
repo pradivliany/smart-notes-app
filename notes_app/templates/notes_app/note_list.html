@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}My Notes{% endblock %}
+
+{% block content %}
+
+{% for note in notes %}
+<div class="card">
+    {% if note.done %}
+    <h5 class="card-header">Status = DONE</h5>
+    <a href="{% url 'notes_app:note_toggle_status' note.id %}">Mark Not Done</a>
+    {% else %}
+    <h5 class="card-header">Status = Not done</h5>
+    <a href="{% url 'notes_app:note_toggle_status' note.id %}">Mark Done</a>
+    {% endif %}
+    <div class="card-body">
+        <h5 class="card-title">{{ note.name }}</h5>
+        <p class="card-text">{{ note.description }}</p>
+        <p>
+            {% for tag in note.tags.all %}
+                <span class="badge bg-secondary">{{ tag.name }}</span>
+            {% endfor %}
+        </p>
+        <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary">Details</a>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
