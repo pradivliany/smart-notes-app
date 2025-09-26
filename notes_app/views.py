@@ -20,12 +20,17 @@ def tag_create(request):
             tag = form.save(commit=False)
             tag.user = request.user
             tag.save()
-            messages.success(request, "Tag was successfully created")
-            return redirect(to="notes_app:tag_list")
-        return render(request, "notes_app/tag_create.html", {"form": form})
 
-    # request.method == "GET"
-    return render(request, "notes_app/tag_create.html", {"form": TagForm()})
+            if "save" in request.POST:
+                messages.success(request, "Tag was successfully created")
+                return redirect(to="notes_app:tag_list")
+            elif "save_and_add" in request.POST:
+                messages.success(request, "Tag was saved. Now you can add another one")
+                return redirect(to="notes_app:tag_create")
+    else:
+        form = TagForm()  # request.method == "GET"
+
+    return render(request, "notes_app/tag_create.html", {"form": form})
 
 
 @login_required
@@ -49,7 +54,7 @@ def note_detail(request, note_id):
 
 
 @login_required
-def note_set_status(request, note_id):
+def note_toggle_status(request, note_id):
     note = get_object_or_404(Note, pk=note_id, user=request.user)
     note.done = not note.done
     note.save()
@@ -67,11 +72,11 @@ def note_edit(request, note_id):
             form.save()
             messages.success(request, "Note was edited!")
             return redirect(to="notes_app:note_list")
-        return render(request, "notes_app/note_form.html", {"form": form})
+        return render(request, "notes_app/note_create.html", {"form": form})
 
     # if request.method == "GET"
     return render(
-        request, "notes_app/note_form.html", {"form": NoteForm(instance=note)}
+        request, "notes_app/note_create.html", {"form": NoteForm(instance=note)}
     )
 
 
@@ -87,15 +92,19 @@ def note_delete(request, note_id):
 
 @login_required
 def note_create(request):
-    if request.method == 'POST':
+    tags = Tag.objects.filter(user=request.user)
+
+    if request.method == "POST":
         form = NoteForm(request.POST)
         if form.is_valid():
-            note = form.save(commit=False)
-            note.user = request.user
-            note.save()
+            new_note = form.save(commit=False)
+            choice_tags = Tag.objects.filter(name__in=request.POST.getlist("tags"))
+            new_note.user = request.user
+            new_note.save()
+            new_note.tags.set(choice_tags)
             messages.success(request, "Note was created!")
             return redirect(to="notes_app:note_list")
-        return render(request, "notes_app/note_form.html", {"form": form})
+    else:
+        form = NoteForm()  # request.method == "GET"
 
-    # if request.method == "GET"
-    return render(request, "notes_app/note_form.html", {"form": NoteForm()})
+    return render(request, "notes_app/note_create.html", {"form": form, "tags": tags})
