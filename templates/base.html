@@ -6,14 +6,15 @@
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="icon" href="{% static 'images/favicon.png' %}">
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <!-- Logo and name (left) -->
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{% url 'welcome' %}">
             <img src="{% static 'images/logo.svg' %}" alt="Logo" width="30" height="24"
                  class="d-inline-block align-text-top">
             Notes
@@ -28,11 +29,12 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">My Profile</a></li>
-                <li><a class="dropdown-item" href="#">Add Note</a></li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:note_create' %}">Add Note</a></li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:tag_create' %}">Add Tag</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
+                <li><a class="dropdown-item" href="{% url 'users_app:logout' %}">Logout</a></li>
             </ul>
         </div>
         {% else %}
@@ -42,8 +44,8 @@
                 Account
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Login</a></li>
-                <li><a class="dropdown-item" href="#">SignUp</a></li>
+                <li><a class="dropdown-item" href="{% url 'users_app:login' %}">Login</a></li>
+                <li><a class="dropdown-item" href="{% url 'users_app:signup' %}">SignUp</a></li>
             </ul>
         </div>
         {% endif %}
