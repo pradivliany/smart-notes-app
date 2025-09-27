@@ -43,7 +43,7 @@ def tag_delete(request, tag_id):
 
 @login_required
 def note_list(request):
-    notes = Note.objects.filter(user=request.user)
+    notes = Note.objects.filter(user=request.user).order_by("-id")
     return render(request, "notes_app/note_list.html", {"notes": notes})
 
 
@@ -56,10 +56,14 @@ def note_detail(request, note_id):
 @login_required
 def note_toggle_status(request, note_id):
     note = get_object_or_404(Note, pk=note_id, user=request.user)
-    note.done = not note.done
-    note.save()
-    messages.success(request, "Note status was changed")
-    return redirect(to="notes_app:note_list")
+
+    if request.method == "POST":
+        note.done = not note.done
+        note.save()
+        messages.success(request, "Note status was changed")
+        return redirect(to="notes_app:note_detail", note_id=note.pk)
+
+    return redirect(to="notes_app:note_detail", note_id=note.pk)
 
 
 @login_required
@@ -87,6 +91,7 @@ def note_delete(request, note_id):
         note.delete()
         messages.success(request, "Note was deleted!")
         return redirect(to="notes_app:note_list")
+
     return redirect(to="notes_app:note_list")
 
 
