@@ -5,33 +5,72 @@
 
 {% block content %}
 
-<h1>{{ note.name }}</h1>
-<p>Description: <b>{{ note.description }}</b></p>
-<p>Time of creation: <kbd>{{ note.created_at }}</kbd></p>
-{% if note.done %}
-<p>Status:
-    <ins>Completed</ins>
-</p>
-{% else %}
-<p>Status: <i>Not implemented</i></p>
-{% endif %}
-<p>Tags:
-    {% for tag in note.tags.all %}
-    <span class="badge bg-secondary">{{ tag.name }}</span>
-    {% empty %}
-    No tags
-    {% endfor %}
-</p>
-<div>
-    {% if note.done %}
-    <a href="{% url 'notes_app:note_toggle_status' note.id %}" role="button">Mark Not Done</a>
-    {% else %}
-    <a href="{% url 'notes_app:note_toggle_status' note.id %}" role="button">Mark Done</a>
-    {% endif %}
-    <form method="post" action="{% url 'notes_app:note_delete' note.id %}" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger btn-sm">Delete Note</button>
-    </form>
-    <a href="{% url 'notes_app:note_edit' note.id %}" class="btn btn-primary btn-sm">Edit Note</a>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card {% if note.done %}bg-success text-white{% else %}bg-info text-dark{% endif %} border">
+                <div class="card-body">
+                    <h3 class="card-title">{{ note.name }}</h3>
+                    <p class="card-text">{{ note.description }}</p>
+
+                    <p>
+                        <strong>Created at:</strong> <kbd>{{ note.created_at }}</kbd>
+                    </p>
+
+                    <p>
+                        <strong>Tags:</strong>
+                        {% for tag in note.tags.all %}
+                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% empty %}
+                        No tags
+                        {% endfor %}
+                    </p>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <!-- Toggle status -->
+                        <form method="post" action="{% url 'notes_app:note_toggle_status' note.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                {% if note.done %}Mark Not Done{% else %}Mark Done{% endif %}
+                            </button>
+                        </form>
+
+                        <!-- Edit note -->
+                        <a href="{% url 'notes_app:note_edit' note.id %}" class="btn btn-primary btn-sm">Edit Note</a>
+
+                        <!-- Delete note -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Modal Delete -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the note: <strong>{{ note.name }}</strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'notes_app:note_delete' note.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
