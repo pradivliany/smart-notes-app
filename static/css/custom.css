@@ -1,0 +1,17 @@
+.navbar .dropdown-item:hover {
+    background-color: #198754;
+    color: #fff;
+}
+.navbar .btn-group {
+    gap: 0.5rem;
+}
+footer {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 0.8rem 0;
+}
+
+main {
+    padding: 1.5rem;
+}
