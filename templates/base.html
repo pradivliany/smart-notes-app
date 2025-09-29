@@ -26,7 +26,8 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-light text-dark">
     <div class="container-fluid">
         <!-- Logo and name (left) -->
         <a class="navbar-brand" href="{% url 'welcome' %}">
@@ -46,6 +47,7 @@
                 <li><a class="dropdown-item" href="#">My Profile</a></li>
                 <li><a class="dropdown-item" href="{% url 'notes_app:note_create' %}">Add Note</a></li>
                 <li><a class="dropdown-item" href="{% url 'notes_app:tag_create' %}">Add Tag</a></li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:tag_list' %}">My Tags</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
@@ -67,9 +69,27 @@
     </div>
 </nav>
 
-{% block content %}{% endblock %}
+<!-- Messages -->
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    {% if message.tags %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div>{{ message }}</div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 
-<footer class="bg-light text-center text-dark py-3 mt-auto">
+<!-- Content -->
+<main class="bg-body flex-grow-1">{% block content %}{% endblock %}</main>
+
+<!-- Footer -->
+<footer class="bg-secondary text-center text-white p-2">
     <div class="container">
         <p class="mb-0">© 2025 Notes App</p>
     </div>
