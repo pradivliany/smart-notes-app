@@ -6,6 +6,9 @@ from .forms import NoteForm, TagForm
 from .models import Note, Tag
 
 
+# ------------------------
+# TAGS
+# ------------------------
 @login_required
 def tag_list(request):
     tags = Tag.objects.filter(user=request.user)
@@ -41,6 +44,9 @@ def tag_delete(request, tag_id):
     return redirect(to="notes_app:tag_list")
 
 
+# ------------------------
+# NOTES
+# ------------------------
 @login_required
 def note_list(request):
     notes = Note.objects.filter(user=request.user).order_by("-id")
@@ -61,38 +67,10 @@ def note_toggle_status(request, note_id):
         note.done = not note.done
         note.save()
         messages.success(request, "Note status was changed")
-        return redirect(to="notes_app:note_detail", note_id=note.pk)
-
-    return redirect(to="notes_app:note_detail", note_id=note.pk)
-
-
-@login_required
-def note_edit(request, note_id):
-    note = get_object_or_404(Note, pk=note_id, user=request.user)
-
-    if request.method == "POST":
-        form = NoteForm(request.POST, instance=note)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Note was edited!")
-            return redirect(to="notes_app:note_list")
-        return render(request, "notes_app/note_create.html", {"form": form})
-
-    # if request.method == "GET"
-    return render(
-        request, "notes_app/note_create.html", {"form": NoteForm(instance=note)}
-    )
-
-
-@login_required
-def note_delete(request, note_id):
-    if request.method == "POST":
-        note = get_object_or_404(Note, pk=note_id, user=request.user)
-        note.delete()
-        messages.success(request, "Note was deleted!")
         return redirect(to="notes_app:note_list")
 
-    return redirect(to="notes_app:note_list")
+    messages.info(request, "Status change allowed only via POST")
+    return redirect(to="notes_app:note_detail", note_id=note.pk)
 
 
 @login_required
@@ -110,6 +88,44 @@ def note_create(request):
             messages.success(request, "Note was created!")
             return redirect(to="notes_app:note_list")
     else:
-        form = NoteForm()  # request.method == "GET"
+        form = NoteForm()
 
-    return render(request, "notes_app/note_create.html", {"form": form, "tags": tags})
+    return render(
+        request,
+        "notes_app/note_form.html",
+        {"form": form, "tags": tags, "is_edit": False},
+    )
+
+
+@login_required
+def note_edit(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, user=request.user)
+    tags = Tag.objects.filter(user=request.user)
+
+    if request.method == "POST":
+        form = NoteForm(request.POST, instance=note)
+        if form.is_valid():
+            form.save()
+            choice_tags = Tag.objects.filter(name__in=request.POST.getlist("tags"))
+            note.tags.set(choice_tags)
+            messages.success(request, "Note was edited!")
+            return redirect(to="notes_app:note_list")
+    else:
+        form = NoteForm(instance=note)
+
+    return render(
+        request,
+        "notes_app/note_form.html",
+        {"form": form, "tags": tags, "is_edit": True},
+    )
+
+
+@login_required
+def note_delete(request, note_id):
+    if request.method == "POST":
+        note = get_object_or_404(Note, pk=note_id, user=request.user)
+        note.delete()
+        messages.success(request, "Note was deleted!")
+        return redirect(to="notes_app:note_list")
+
+    return redirect(to="notes_app:note_list")

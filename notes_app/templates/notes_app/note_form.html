@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_edit %}Edit Note{% else %}Create Note{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>{% if is_edit %}Edit Note{% else %}Create Note{% endif %}</h1>
+    <p>Write your note and choose relevant tags to organize it.</p>
+    <hr>
+
+    <form method="post"
+          action="{% if is_edit %}{% url 'notes_app:note_edit' note_id=form.instance.id %}{% else %}{% url 'notes_app:note_create' %}{% endif %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            {% if form.errors.name %}
+                <div class="text-danger">{{ form.errors.name }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+            {% if form.errors.description %}
+                <div class="text-danger">{{ form.errors.description }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_tags" class="form-label">Select tags:</label>
+            <select name="tags" id="id_tags" class="form-select" multiple required>
+                {% for tag in tags %}
+                    <option value="{{ tag.name }}"
+                            {% if tag in form.instance.tags.all %}selected{% endif %}>{{ tag.name }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
