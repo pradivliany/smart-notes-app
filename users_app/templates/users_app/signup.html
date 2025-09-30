@@ -4,40 +4,61 @@
 
 {% block content %}
 
+<div class="container mt-3">
+    <h1 class="text-center">Sign up</h1>
 
-<p>Sign up</p>
-<form method="post" action="{% url 'users_app:signup' %}" class="row g-3 needs-validation" novalidate>
-    {% csrf_token %}
-    <div>
-        <label>First name: {{ form.first_name }}</label>
-        <span>{{ form.errors.first_name }}</span>
-    </div>
-    <br>
-    <div>
-        <label>Last name: {{ form.last_name }}</label>
-        <span>{{ form.errors.last_name }}</span>
-    </div>
-    <br>
-    <div>
-        <label>Email: {{ form.email }}</label>
-        <span>{{ form.errors.email }}</span>
-    </div>
-    <div>
-        <label>Password: {{ form.password1 }}</label>
-        <span>{{ form.errors.password1 }}</span>
-    </div>
-    <div>
-        <label>Password confirmation: {{ form.password2 }}</label>
-        <span>{{ form.errors.password2 }}</span>
-    </div>
-    <div class="grid">
-        <button type="submit">SignUp</button>
-        <button type="reset">Reset</button>
-    </div>
-</form>
-<div>
-    <p>Already have an account?</p>
-    <a href="{% url 'users_app:login' %}" class="btn btn-success">Login</a>
+    <hr class="border border-primary border-3 opacity-75">
+
+    <form method="post" action="{% url 'users_app:signup' %}">
+        {% csrf_token %}
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.first_name }}
+            {% if form.errors.first_name %}
+                <div class="text-danger mt-1">{{ form.errors.first_name }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.last_name }}
+            {% if form.errors.last_name %}
+                <div class="text-danger mt-1">{{ form.errors.last_name }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.email }}
+            {% if form.errors.email %}
+                <div class="text-danger mt-1">{{ form.errors.email }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.password1 }}
+            {% if form.errors.password1 %}
+                <div class="text-danger mt-1">{{ form.errors.password1 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.password2 }}
+            {% if form.errors.password2 %}
+                <div class="text-danger mt-1">{{ form.errors.password2 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary btn-sm">Register</button>
+            <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
+        </div>
+        <div>
+            <p>Already have an account?
+                <a href="{% url 'users_app:login' %}" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                    Login here
+                </a></p>
+        </div>
+    </form>
+
 </div>
 
 {% endblock %}

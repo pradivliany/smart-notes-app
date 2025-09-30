@@ -5,17 +5,41 @@ from django.contrib.auth.models import User
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(
-        max_length=150, min_length=2, required=True, widget=forms.TextInput()
+        max_length=150,
+        min_length=2,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Your First name"}
+        ),
     )
     last_name = forms.CharField(
-        max_length=150, min_length=2, required=True, widget=forms.TextInput()
+        max_length=150,
+        min_length=2,
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Your Last name"}
+        ),
     )
-    email = forms.EmailField(max_length=254, required=True, widget=forms.TextInput())
+    email = forms.EmailField(
+        max_length=254,
+        required=True,
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Your Email"}
+        ),
+    )
     password1 = forms.CharField(
-        max_length=50, required=True, widget=forms.PasswordInput()
+        max_length=50,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Password"}
+        ),
     )
     password2 = forms.CharField(
-        max_length=50, required=True, widget=forms.PasswordInput()
+        max_length=50,
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Repeat your password"}
+        ),
     )
 
     class Meta:
