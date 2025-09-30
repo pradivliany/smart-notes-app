@@ -40,3 +40,12 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect(to="welcome")
+
+
+# todo functionality later
+def reset_password(request):
+    # todo send email with token to reset password
+    if request.method == "GET":
+        return render(request, "users_app/reset_password.html")
+    else:
+        pass

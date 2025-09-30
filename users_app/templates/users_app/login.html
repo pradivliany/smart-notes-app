@@ -3,12 +3,46 @@
 {% block title %}Your Notes Web - Login{% endblock %}
 
 {% block content %}
-<div class="container">
+
+<div class="container mt-3">
+    <h1 class="text-center">Login</h1>
+
+    <hr class="border border-primary border-3 opacity-75">
+
+    {% if form.non_field_errors %}
+    <div class="text-danger mb-3">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post" action="{% url 'users_app:login' %}">
         {% csrf_token %}
-        {{ form.username }}
-        {{ form.password }}
-        <button type="submit" class="btn btn-primary">Log in</button>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.username }}
+        </div>
+
+        <div class="mb-3 border border-primary rounded">
+            {{ form.password }}
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary btn-sm">Login</button>
+            <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
+        </div>
+
+        <div>
+            <p>Forgot your password?
+                <a href="{% url 'users_app:reset_password' %}"
+                   class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                    Click here
+                </a></p>
+        </div>
+
     </form>
+
 </div>
+
 {% endblock %}
