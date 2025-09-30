@@ -9,7 +9,7 @@
         {% for note in notes %}
         <div class="col-md-6 col-lg-4 mb-3">
             <div class="card {% if note.done %}bg-success text-white{% else %}bg-info text-dark{% endif %} h-100 border">
-                <div class="card-body">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">{{ note.name }}</h5>
                     <p class="card-text">{{ note.description }}</p>
 
@@ -19,14 +19,15 @@
                         {% endfor %}
                     </p>
 
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between mt-auto">
                         <form method="post" action="{% url 'notes_app:note_toggle_status' note.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-warning btn-sm">
                                 {% if note.done %}Mark Not Done{% else %}Mark Done{% endif %}
                             </button>
                         </form>
-                        <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary btn-sm">Manage note</a>
+                        <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary btn-sm">Manage
+                            note</a>
                     </div>
                 </div>
             </div>
