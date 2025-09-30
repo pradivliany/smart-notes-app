@@ -2,9 +2,11 @@
     background-color: #198754;
     color: #fff;
 }
+
 .navbar .btn-group {
     gap: 0.5rem;
 }
+
 footer {
     background: linear-gradient(135deg, #6c757d, #495057);
     color: #fff;
