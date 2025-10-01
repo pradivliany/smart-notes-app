@@ -19,8 +19,8 @@
 
                     <p>
                         <strong>Tags:</strong>
-                        {% for tag in note.tags.all %}
-                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% for tag in note.tags|extract_tags:-1 %}
+                        <span class="badge bg-secondary me-1">{{ tag }}</span>
                         {% empty %}
                         No tags
                         {% endfor %}

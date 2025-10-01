@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load custom_filters %}
+
 {% block title %}My Notes{% endblock %}
 
 {% block content %}
@@ -14,8 +16,8 @@
                     <p class="card-text">{{ note.description }}</p>
 
                     <p>
-                        {% for tag in note.tags.all %}
-                        <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                        {% for tag in note.tags|extract_tags %}
+                        <span class="badge bg-secondary me-1">{{ tag }}</span>
                         {% endfor %}
                     </p>
 
