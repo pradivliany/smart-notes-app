@@ -9,53 +9,66 @@
 
     <hr class="border border-primary border-3 opacity-75">
 
+    {% if form.non_field_errors %}
+    <div class="text-danger mb-3">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <form method="post" action="{% url 'users_app:signup' %}">
         {% csrf_token %}
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.first_name }}
-            {% if form.errors.first_name %}
-                <div class="text-danger mt-1">{{ form.errors.first_name }}</div>
-            {% endif %}
-        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mx-auto">
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.first_name }}
+                    {% if form.errors.first_name %}
+                    <div class="text-danger mt-1">{{ form.errors.first_name }}</div>
+                    {% endif %}
+                </div>
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.last_name }}
-            {% if form.errors.last_name %}
-                <div class="text-danger mt-1">{{ form.errors.last_name }}</div>
-            {% endif %}
-        </div>
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.last_name }}
+                    {% if form.errors.last_name %}
+                    <div class="text-danger mt-1">{{ form.errors.last_name }}</div>
+                    {% endif %}
+                </div>
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.email }}
-            {% if form.errors.email %}
-                <div class="text-danger mt-1">{{ form.errors.email }}</div>
-            {% endif %}
-        </div>
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.email }}
+                    {% if form.errors.email %}
+                    <div class="text-danger mt-1">{{ form.errors.email }}</div>
+                    {% endif %}
+                </div>
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.password1 }}
-            {% if form.errors.password1 %}
-                <div class="text-danger mt-1">{{ form.errors.password1 }}</div>
-            {% endif %}
-        </div>
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.password1 }}
+                    {% if form.errors.password1 %}
+                    <div class="text-danger mt-1">{{ form.errors.password1 }}</div>
+                    {% endif %}
+                </div>
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.password2 }}
-            {% if form.errors.password2 %}
-                <div class="text-danger mt-1">{{ form.errors.password2 }}</div>
-            {% endif %}
-        </div>
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.password2 }}
+                    {% if form.errors.password2 %}
+                    <div class="text-danger mt-1">{{ form.errors.password2 }}</div>
+                    {% endif %}
+                </div>
 
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary btn-sm">Register</button>
-            <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
-        </div>
-        <div>
-            <p>Already have an account?
-                <a href="{% url 'users_app:login' %}" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                    Login here
-                </a></p>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary btn-sm">Register</button>
+                    <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
+                </div>
+                <div>
+                    <p>Already have an account?
+                        <a href="{% url 'users_app:login' %}"
+                           class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                            Login here
+                        </a></p>
+                </div>
+            </div>
         </div>
     </form>
 

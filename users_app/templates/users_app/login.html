@@ -20,27 +20,31 @@
     <form method="post" action="{% url 'users_app:login' %}">
         {% csrf_token %}
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.username }}
-        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4 mx-auto">
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.username }}
+                </div>
 
-        <div class="mb-3 border border-primary rounded">
-            {{ form.password }}
-        </div>
+                <div class="mb-3 border border-primary rounded">
+                    {{ form.password }}
+                </div>
 
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary btn-sm">Login</button>
-            <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
-        </div>
+                <div class="mb-3 text-center">
+                    <button type="submit" class="btn btn-primary btn-sm">Login</button>
+                    <button type="reset" class="btn btn-secondary btn-sm">Reset</button>
+                </div>
 
-        <div>
-            <p>Forgot your password?
-                <a href="{% url 'users_app:reset_password' %}"
-                   class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                    Click here
-                </a></p>
+                <div class="text-center">
+                    <p>Forgot your password?
+                        <a href="{% url 'users_app:reset_password' %}"
+                           class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                            Click here
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
-
     </form>
 
 </div>
