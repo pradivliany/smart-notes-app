@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import NoteForm, TagForm
@@ -22,14 +23,20 @@ def tag_create(request):
         if form.is_valid():
             tag = form.save(commit=False)
             tag.user = request.user
-            tag.save()
+            try:
+                tag.save()
+                if "save" in request.POST:
+                    messages.success(request, "Tag was successfully created")
+                    return redirect(to="notes_app:tag_list")
+                elif "save_and_add" in request.POST:
+                    messages.success(
+                        request, "Tag was saved. Now you can add another one"
+                    )
+                    return redirect(to="notes_app:tag_create")
+            except IntegrityError as err:
+                form.add_error("name", "You already have a tag with this name.")
+                return render(request, "notes_app/tag_create.html", {"form": form})
 
-            if "save" in request.POST:
-                messages.success(request, "Tag was successfully created")
-                return redirect(to="notes_app:tag_list")
-            elif "save_and_add" in request.POST:
-                messages.success(request, "Tag was saved. Now you can add another one")
-                return redirect(to="notes_app:tag_create")
     else:
         form = TagForm()  # request.method == "GET"
 
