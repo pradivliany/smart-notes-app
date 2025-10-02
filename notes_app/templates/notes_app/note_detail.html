@@ -1,32 +1,32 @@
 {% extends "base.html" %}
+
 {% load custom_filters %}
 
 {% block title %}Note Detail{% endblock %}
 
 {% block content %}
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card {% if note.done %}bg-success text-white{% else %}bg-info text-dark{% endif %} border">
+<div class="container mt-3">
+    <hr class="border border-primary border-3 opacity-75">
+
+    <h1 class="text-center pb-3">Manage Note</h1>
+
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-6 mx-auto">
+            <div class="card {% if note.done %}bg-success text-white{% else %}card-bronze text-white{% endif %} h-100 border">
                 <div class="card-body">
-                    <h3 class="card-title">{{ note.name }}</h3>
-                    <p class="card-text">{{ note.description }}</p>
+                    <h3 class="card-title text-center pb-4">{{ note.name }}</h3>
+                    <p class="card-text pb-3">{{ note.description }}</p>
 
-                    <p>
-                        <strong>Created at:</strong> <kbd>{{ note.created_at }}</kbd>
-                    </p>
-
+                    <p><strong>Created at:</strong> <kbd>{{ note.created_at }}</kbd></p>
                     <p>
                         <strong>Tags:</strong>
                         {% for tag in note.tags|extract_tags:-1 %}
                         <span class="badge bg-secondary me-1">{{ tag }}</span>
-                        {% empty %}
-                        No tags
                         {% endfor %}
                     </p>
 
-                    <div class="d-flex justify-content-between mt-3">
+                    <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
                         <!-- Toggle status -->
                         <form method="post" action="{% url 'notes_app:note_toggle_status' note.id %}">
                             {% csrf_token %}
@@ -45,6 +45,13 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-6 mx-auto">
+            <div class="mt-3">
+                <a href="{% url 'notes_app:note_list' %}" class="btn btn-secondary btn-sm w-100">Back to Notes</a>
             </div>
         </div>
     </div>

@@ -1,20 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Tag{% endblock %}
+{% block title %}Create Tag{% endblock %}
 
 {% block content %}
 
-<form method="post" action="{% url 'notes_app:tag_create' %}">
-    {% csrf_token %}
-    <div>
-        <label>Type the name of new tag: {{ form.name }}</label>
-        <span>{{ form.errors.name }}</span>
+<div class="container mt-3">
+    <hr class="border border-primary border-3 opacity-75">
+
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 mx-auto">
+            <h1 class="text-center">Create Tag</h1>
+            <p class="text-center text-muted mb-4">Type the name of the new tag below.</p>
+            <hr>
+
+            <form method="post" action="{% url 'notes_app:tag_create' %}">
+                {% csrf_token %}
+
+                <div class="mb-3 border border-primary rounded p-2">
+                    {{ form.name }}
+                    {% if form.errors.name %}
+                    <div class="text-danger mt-1">{{ form.errors.name }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" name="save" value="Save">Save</button>
+                    <button type="submit" name="save_and_add" value="Save and add new">Save and add new</button>
+                    <a href="{% url 'notes_app:tag_list' %}" class="btn btn-outline-secondary">Back to Tags</a>
+                </div>
+
+            </form>
+        </div>
     </div>
-    <div class="grid">
-        <button type="submit" name="save" value="Save">Save</button>
-        <button type="submit" name="save_and_add" value="Save and add new">Save and add new</button>
-    </div>
-</form>
+
+</div>
 
 {% endblock %}
 

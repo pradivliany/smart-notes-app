@@ -45,11 +45,15 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">My Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'notes_app:note_create' %}">Add Note</a></li>
-                <li><a class="dropdown-item" href="{% url 'notes_app:tag_create' %}">Add Tag</a></li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:note_list' %}">My Notes</a></li>
                 <li><a class="dropdown-item" href="{% url 'notes_app:tag_list' %}">My Tags</a></li>
                 <li>
-                    <hr class="dropdown-divider">
+                    <hr>
+                </li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:note_create' %}">Add Note</a></li>
+                <li><a class="dropdown-item" href="{% url 'notes_app:tag_create' %}">Add Tag</a></li>
+                <li>
+                    <hr>
                 </li>
                 <li><a class="dropdown-item" href="{% url 'users_app:logout' %}">Logout</a></li>
             </ul>

@@ -4,19 +4,41 @@
 
 {% block content %}
 
-<ul class="list-group">
-    {% for tag in tags %}
-        <li class="list-group-item">
-            <span class="btn btn-secondary">{{ tag.name }}</span>
-            <a href="{% url 'notes_app:tag_delete' tag.id %}" class="btn btn-danger">Delete</a>
-        </li>
+<div class="container mt-3">
+    <hr class="border border-primary border-3 opacity-75">
 
-    {% endfor %}
-</ul>
-<hr>
-<div class="grid">
-    <a class="btn btn-primary" href="{% url 'notes_app:note_list' %}" role="button">My Notes</a>
-    <a class="btn btn-primary" href="{% url 'notes_app:tag_create' %}" role="button">Add Tag</a>
+    <h1 class="text-center pb-3">My Tags</h1>
+
+    {% if not tags %}
+
+    <div class="text-center mt-5">
+        <p class="text-muted fs-5 mb-4">You have no tags yet. Click the button below to get started!</p>
+        <a href="{% url 'notes_app:tag_create' %}" class="btn btn-outline-primary btn-sm">Create Tag</a>
+    </div>
+
+    {% else %}
+
+    <p class="text-center text-muted mb-4">Manage your tags. Click "Add Tag" to create a new one.</p>
+
+    <div class="col-12 col-md-6 col-lg-6 mx-auto">
+        <ul class="list-group mb-3">
+            {% for tag in tags %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">{{ tag.name }}</span>
+                <a href="{% url 'notes_app:tag_delete' tag.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+        <a href="{% url 'notes_app:note_list' %}" class="btn btn-secondary btn-sm">My Notes</a>
+        <a href="{% url 'notes_app:tag_create' %}" class="btn btn-primary btn-sm">Add Tag</a>
+    </div>
+
+    {% endif %}
+
 </div>
 
 {% endblock %}
