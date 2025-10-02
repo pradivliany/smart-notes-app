@@ -57,5 +57,9 @@ class SignUpForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"].widget.attrs.update({"class": "form-control", "placeholder": "Your email"})
-        self.fields["password"].widget.attrs.update({"class": "form-control", "placeholder": "Password"})
+        self.fields["username"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Your email"}
+        )
+        self.fields["password"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "Password"}
+        )
