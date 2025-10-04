@@ -44,7 +44,7 @@
                 {{ user.username }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">My Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'users_app:profile' %}">My Profile</a></li>
                 <li><a class="dropdown-item" href="{% url 'notes_app:note_list' %}">My Notes</a></li>
                 <li><a class="dropdown-item" href="{% url 'notes_app:tag_list' %}">My Tags</a></li>
                 <li>

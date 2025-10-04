@@ -33,7 +33,7 @@ def tag_create(request):
                         request, "Tag was saved. Now you can add another one"
                     )
                     return redirect(to="notes_app:tag_create")
-            except IntegrityError as err:
+            except IntegrityError:
                 form.add_error("name", "You already have a tag with this name.")
                 return render(request, "notes_app/tag_create.html", {"form": form})
 

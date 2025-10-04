@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <hr class="border border-primary border-3 opacity-75">
+
+    <h1 class="text-center pb-3">Edit Profile</h1>
+
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 mx-auto">
+            <div class="card bg-secondary text-white shadow-sm rounded-3 border h-100">
+                <div class="card-body">
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3 text-center">
+                            {% if request.user.profile.avatar %}
+                            <img src="{{ request.user.profile.avatar.url }}"
+                                 class="img-fluid rounded-0 mb-2"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                            {% endif %}
+                            {{ form.avatar }}
+                            {% if form.errors.avatar %}
+                            <div class="text-danger mt-1">{{ form.errors.avatar }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.bio }}
+                            {% if form.errors.bio %}
+                            <div class="text-danger mt-1">{{ form.errors.bio }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{% url 'users_app:profile' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

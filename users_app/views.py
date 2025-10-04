@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, ProfileForm, SignUpForm
+from .models import Profile
 
 
 def signup_user(request):
@@ -49,3 +51,23 @@ def reset_password(request):
         return render(request, "users_app/reset_password.html")
     else:
         pass
+
+
+@login_required
+def profile(request):
+    curr_profile = Profile.objects.get(user=request.user)
+    return render(request, "users_app/profile.html", {"curr_profile": curr_profile})
+
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect(to="users_app:profile")
+
+    else:
+        form = ProfileForm(instance=request.user.profile)
+
+    return render(request, "users_app/edit_profile.html", {"form": form})

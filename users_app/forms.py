@@ -1,43 +1,46 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+from django.forms import (CharField, EmailField, EmailInput, ImageField,
+                          PasswordInput, TextInput)
+from django.forms.widgets import Textarea
+
+from .models import Profile
 
 
 class SignUpForm(UserCreationForm):
-    first_name = forms.CharField(
+    first_name = CharField(
         max_length=150,
         min_length=2,
         required=True,
-        widget=forms.TextInput(
+        widget=TextInput(
             attrs={"class": "form-control", "placeholder": "Your First name"}
         ),
     )
-    last_name = forms.CharField(
+    last_name = CharField(
         max_length=150,
         min_length=2,
         required=True,
-        widget=forms.TextInput(
+        widget=TextInput(
             attrs={"class": "form-control", "placeholder": "Your Last name"}
         ),
     )
-    email = forms.EmailField(
+    email = EmailField(
         max_length=254,
         required=True,
-        widget=forms.EmailInput(
-            attrs={"class": "form-control", "placeholder": "Your Email"}
-        ),
+        widget=EmailInput(attrs={"class": "form-control", "placeholder": "Your Email"}),
     )
-    password1 = forms.CharField(
+    password1 = CharField(
         max_length=50,
         required=True,
-        widget=forms.PasswordInput(
+        widget=PasswordInput(
             attrs={"class": "form-control", "placeholder": "Password"}
         ),
     )
-    password2 = forms.CharField(
+    password2 = CharField(
         max_length=50,
         required=True,
-        widget=forms.PasswordInput(
+        widget=PasswordInput(
             attrs={"class": "form-control", "placeholder": "Repeat your password"}
         ),
     )
@@ -63,3 +66,17 @@ class LoginForm(AuthenticationForm):
         self.fields["password"].widget.attrs.update(
             {"class": "form-control", "placeholder": "Password"}
         )
+
+
+class ProfileForm(forms.ModelForm):
+    avatar = ImageField(widget=forms.FileInput(attrs={"class": "form-control"}))
+    bio = CharField(
+        min_length=4,
+        max_length=500,
+        required=False,
+        widget=Textarea(attrs={"class": "form-control", "placeholder": "Your bio"}),
+    )
+
+    class Meta:
+        model = Profile
+        fields = ["avatar", "bio"]
