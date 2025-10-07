@@ -1,10 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+from django.utils.http import urlsafe_base64_decode
 
+from .emails import send_activation_email
 from .forms import LoginForm, ProfileForm, SignUpForm
 from .models import Profile
+from .tokens import profile_activation_token
 
 
 def signup_user(request):
@@ -13,14 +17,47 @@ def signup_user(request):
 
     if request.method == "POST":
         form = SignUpForm(request.POST)
+
         if form.is_valid():
-            form.save()
+            email = form.cleaned_data.get("email")
+
+            if User.objects.filter(username=email).exists():
+                messages.error(request, "User with such email already exists.")
+                return redirect(to="users_app:login")
+
+            user = form.save()
+            send_activation_email(request, user)
+            messages.success(
+                request, "Please check your email to complete the activation."
+            )
             return redirect(to="users_app:login")
         else:
             return render(request, "users_app/signup.html", {"form": form})
 
-    # request.method == "GET"
     return render(request, "users_app/signup.html", {"form": SignUpForm()})
+
+
+def activate_user(request, uidb64, token):
+    decoded_pk = urlsafe_base64_decode(uidb64).decode()
+
+    try:
+        user = User.objects.get(pk=decoded_pk)
+    except User.DoesNotExist:
+        messages.error(request, "Something went wrong. User not found.")
+        return redirect(to="users_app:signup")
+
+    if profile_activation_token.check_token(user, token):
+        profile = user.profile
+        profile.is_confirmed = True
+        profile.save()
+        messages.success(
+            request,
+            "Your account has been activated! Now you can add tags and notes.",
+        )
+        return redirect(to="notes_app:note_list")
+    else:
+        messages.error(request, "Invalid or expired activation link.")
+        return redirect(to="users_app:signup")
 
 
 def login_user(request):
@@ -31,10 +68,14 @@ def login_user(request):
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
+            if not request.user.profile.is_confirmed:
+                messages.info(
+                    request, "Please confirm your email to unlock full features."
+                )
+                return redirect(to="users_app:profile")
             return redirect(to="notes_app:note_list")
         return render(request, "users_app/login.html", {"form": form})
 
-    # request.method == "GET"
     return render(request, "users_app/login.html", {"form": LoginForm()})
 
 

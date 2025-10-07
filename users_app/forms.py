@@ -1,8 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
-from django.forms import (CharField, EmailField, EmailInput, ImageField,
-                          PasswordInput, TextInput)
+from django.forms import (
+    CharField,
+    EmailField,
+    EmailInput,
+    ImageField,
+    PasswordInput,
+    TextInput,
+)
 from django.forms.widgets import Textarea
 
 from .models import Profile

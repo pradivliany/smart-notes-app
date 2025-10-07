@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
 
+from .decorators import profile_confirmed_required
 from .forms import NoteForm, TagForm
 from .models import Note, Tag
 
@@ -17,6 +18,7 @@ def tag_list(request):
 
 
 @login_required
+@profile_confirmed_required
 def tag_create(request):
     if request.method == "POST":
         form = TagForm(request.POST)
@@ -81,6 +83,7 @@ def note_toggle_status(request, note_id):
 
 
 @login_required
+@profile_confirmed_required
 def note_create(request):
     tags = Tag.objects.filter(user=request.user)
 
