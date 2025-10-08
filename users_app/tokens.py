@@ -7,3 +7,4 @@ class ProfileActivationTokenGenerator(PasswordResetTokenGenerator):
 
 
 profile_activation_token = ProfileActivationTokenGenerator()
+password_reset_token = PasswordResetTokenGenerator()

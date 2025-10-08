@@ -1,14 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
-from django.forms import (
-    CharField,
-    EmailField,
-    EmailInput,
-    ImageField,
-    PasswordInput,
-    TextInput,
-)
+from django.core.exceptions import ValidationError
+from django.forms import (CharField, EmailField, EmailInput, ImageField,
+                          PasswordInput, TextInput)
 from django.forms.widgets import Textarea
 
 from .models import Profile
@@ -86,3 +81,35 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ["avatar", "bio"]
+
+
+class EmailForm(forms.Form):
+    email = EmailField(
+        max_length=254,
+        min_length=5,
+        required=True,
+        widget=EmailInput(attrs={"class": "form-control", "placeholder": "Your Email"}),
+    )
+
+
+class PasswordConfirmForm(forms.Form):
+    password1 = CharField(
+        max_length=50,
+        required=True,
+        widget=PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Password"}
+        ),
+    )
+    password2 = CharField(
+        max_length=50,
+        required=True,
+        widget=PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Repeat your password"}
+        ),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pw1, pw2 = cleaned_data.get("password1"), cleaned_data.get("password2")
+        if pw1 != pw2:
+            raise ValidationError("Passwords do not match")

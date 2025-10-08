@@ -5,10 +5,11 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 
-from .emails import send_activation_email
-from .forms import LoginForm, ProfileForm, SignUpForm
+from .emails import send_activation_email, send_reset_password_email
+from .forms import (EmailForm, LoginForm, PasswordConfirmForm, ProfileForm,
+                    SignUpForm)
 from .models import Profile
-from .tokens import profile_activation_token
+from .tokens import password_reset_token, profile_activation_token
 
 
 def signup_user(request):
@@ -85,15 +86,6 @@ def logout_user(request):
     return redirect(to="welcome")
 
 
-# todo functionality later
-def reset_password(request):
-    # todo send email with token to reset password
-    if request.method == "GET":
-        return render(request, "users_app/reset_password.html")
-    else:
-        pass
-
-
 @login_required
 def profile(request):
     curr_profile = Profile.objects.get(user=request.user)
@@ -112,3 +104,61 @@ def edit_profile(request):
         form = ProfileForm(instance=request.user.profile)
 
     return render(request, "users_app/edit_profile.html", {"form": form})
+
+
+# ------------------------
+# RESET PASSWORD
+# ------------------------
+
+
+def reset_password(request):
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            user = User.objects.filter(email=form.cleaned_data["email"]).first()
+            if user:
+                send_reset_password_email(request, user)
+
+            return redirect(to="users_app:reset_password_done")
+        else:
+            messages.error(request, "Please enter a valid email address.")
+
+    else:
+        form = EmailForm()
+
+    return render(request, "users_app/reset_password_form.html", {"form": form})
+
+
+def reset_password_done(request):
+    return render(request, "users_app/reset_password_done.html")
+
+
+def reset_password_confirm(request, uidb64, token):
+    decoded_pk = urlsafe_base64_decode(uidb64).decode()
+    user = User.objects.filter(pk=decoded_pk).first()
+
+    if user and password_reset_token.check_token(user, token):
+        if request.method == "POST":
+            form = PasswordConfirmForm(request.POST)
+            if form.is_valid():
+                user.set_password(form.cleaned_data["password1"])
+                user.save()
+                messages.success(
+                    request,
+                    "Your password has been successfully changed. You can now login with your new password.",
+                )
+                return redirect(to="users_app:login")
+            else:
+                messages.error(request, "Please correct the errors in the form below.")
+
+        else:
+            form = PasswordConfirmForm()
+
+        return render(request, "users_app/reset_password_confirm.html", {"form": form})
+
+    else:
+        messages.error(
+            request,
+            "This password reset link is invalid or has expired. Please request a new one.",
+        )
+        return redirect(to="users_app:login")
