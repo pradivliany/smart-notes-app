@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .decorators import profile_confirmed_required
-from .forms import NoteForm, TagForm
+from .forms import NoteForm, NoteTodoForm, TagForm
 from .models import Note, Tag
 
 
@@ -74,6 +74,9 @@ def note_toggle_status(request, note_id):
 
     if request.method == "POST":
         note.done = not note.done
+        if note.is_todo:
+            note.is_todo = False
+            note.deadline = None
         note.save()
         messages.success(request, "Note status was changed")
         return redirect(to="notes_app:note_list")
@@ -139,3 +142,44 @@ def note_delete(request, note_id):
         return redirect(to="notes_app:note_list")
 
     return redirect(to="notes_app:note_list")
+
+
+@login_required
+def note_toggle_todo(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, user=request.user)
+
+    if note.is_todo:
+        note.deadline = None
+        note.is_todo = False
+        note.save()
+        messages.success(request, "Note is no longer in ToDo mode")
+        return redirect(to="notes_app:note_list")
+
+    else:
+        if note.done:
+            note.done = False
+            note.save()
+            messages.info(request, "Completed status removed, now you can set a ToDo")
+        return redirect(to="notes_app:note_set_deadline", note_id=note.pk)
+
+
+@login_required
+def note_set_deadline(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, user=request.user)
+
+    if request.method == "POST":
+        form = NoteTodoForm(request.POST, instance=note)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.is_todo = True
+            note.done = False
+            note.save()
+            messages.success(
+                request, f'"{note.name}" is now a To-Do with deadline set!'
+            )
+            return redirect(to="notes_app:note_list")
+        else:
+            messages.error(request, "Please choose a valid date and time.")
+    else:
+        form = NoteTodoForm(instance=note)
+    return render(request, "notes_app/set_deadline.html", {"form": form, "note": note})

@@ -13,6 +13,10 @@ urlpatterns = [
         views.note_toggle_status,
         name="note_toggle_status",
     ),
+    path(
+        "<int:note_id>/set_deadline/", views.note_set_deadline, name="note_set_deadline"
+    ),
+    path("<int:note_id>/toggle_todo/", views.note_toggle_todo, name="note_toggle_todo"),
     path("<int:note_id>/edit/", views.note_edit, name="note_edit"),
     path("<int:note_id>/delete/", views.note_delete, name="note_delete"),
     path("tags/", views.tag_list, name="tag_list"),

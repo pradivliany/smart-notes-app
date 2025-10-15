@@ -10,7 +10,6 @@
     <hr class="border border-primary border-3 opacity-75">
 
     {% if not notes %}
-
     <div class="text-center mt-5">
         <p class="text-muted fs-5 mb-4">You have no notes yet. Click the button below to get started!</p>
         <div class="d-flex justify-content-center gap-2 flex-wrap">
@@ -18,36 +17,60 @@
             <a href="{% url 'notes_app:tag_create' %}" class="btn btn-outline-primary btn-sm">Create Tag</a>
         </div>
     </div>
-
     {% else %}
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>My Notes</h1><a href="{% url 'notes_app:note_create' %}" class="btn btn-success btn-sm">Create Note</a>
+    <div class="mb-3">
+        <h1 class="mb-1">My Dashboard</h1>
+        <p class="text-muted small mb-3">All your notes, tasks and completed items in one place</p>
     </div>
 
     <div class="row">
         {% for note in notes %}
         <div class="col-md-6 col-lg-4 mb-3">
-            <div class="card {% if note.done %}bg-success text-white{% else %}card-bronze text-white{% endif %} h-100 border">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ note.name }}</h5>
-                    <p class="card-text">{{ note.description }}</p>
+            <div class="card
+    {% if note.done %}bg-success border-success text-white{% elif note.is_todo %}bg-info border-info text-white{% else %}bg-light border-secondary text-dark{% endif %}
+    h-100 shadow-sm rounded-3">
+                <div class="card-body d-flex flex-column p-3">
 
-                    <p>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <!-- ToDos switch -->
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge rounded-pill text-bg-light">ToDo?</span>
+                            <a href="{% if note.is_todo %}{% url 'notes_app:note_toggle_todo' note.id %}{% else %}{% url 'notes_app:note_set_deadline' note.id %}{% endif %}"
+                               class="switch mb-0">
+                                <span class="slider {% if note.is_todo %}checked{% endif %}"></span>
+                            </a>
+                        </div>
+
+                        <!-- Completed switch -->
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge rounded-pill text-bg-light">Completed?</span>
+                            <form method="post" action="{% url 'notes_app:note_toggle_status' note.id %}"
+                                  class="m-0 p-0">
+                                {% csrf_token %}
+                                <label class="switch mb-0">
+                                    <input type="checkbox"
+                                           name="done"
+                                           onchange="this.form.submit()" {% if note.done %}checked{% endif %}>
+                                    <span class="slider"></span>
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+
+                    <h5 class="card-title mt-1">{{ note.name }}</h5>
+                    <p class="card-text mb-2">{{ note.description }}</p>
+
+                    <div class="mb-2">
                         {% for tag in note.tags|extract_tags %}
-                        <span class="badge bg-secondary me-1">{{ tag }}</span>
+                        <span class="badge bg-secondary me-1 mb-1">{{ tag }}</span>
                         {% endfor %}
-                    </p>
+                    </div>
 
-                    <div class="d-flex justify-content-between mt-auto">
-                        <form method="post" action="{% url 'notes_app:note_toggle_status' note.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-warning btn-sm">
-                                {% if note.done %}Mark as Not Done{% else %}Mark as Done{% endif %}
-                            </button>
-                        </form>
+                    <div class="mt-auto text-center">
                         <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary btn-sm">Edit</a>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -55,7 +78,6 @@
     </div>
 
     {% endif %}
-
 </div>
 
 {% endblock %}

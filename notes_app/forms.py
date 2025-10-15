@@ -1,5 +1,5 @@
-from django.forms import CharField, ModelForm, TextInput
-from django.forms.widgets import Textarea
+from django.forms import CharField, DateTimeField, ModelForm, TextInput
+from django.forms.widgets import DateTimeInput, Textarea
 
 from .models import Note, Tag
 
@@ -37,3 +37,14 @@ class NoteForm(ModelForm):
         model = Note
         fields = ["name", "description"]
         exclude = ["tags"]
+
+
+class NoteTodoForm(ModelForm):
+    deadline = DateTimeField(
+        required=True,
+        widget=DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
+    )
+
+    class Meta:
+        model = Note
+        fields = ["deadline"]

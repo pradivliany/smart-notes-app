@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Set Deadline{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <hr class="border border-primary border-3 opacity-75">
+
+    <h1 class="text-center mb-4">Set a Deadline for Your Task</h1>
+
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4 mx-auto">
+            <form action="{% url 'notes_app:note_set_deadline' note.id %}" method="post"
+                  class="p-4 border rounded-3 shadow-sm bg-light">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="{{ form.deadline.id_for_label }}" class="form-label fw-bold">
+                        Choose Date & Time
+                    </label>
+                    {{ form.deadline }}
+                    {% if form.errors.deadline %}
+                    <div class="text-danger small mt-1">{{ form.errors.deadline }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{% url 'notes_app:note_list' %}" class="btn btn-outline-secondary btn-sm">
+                        ← Back
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Save Deadline
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
