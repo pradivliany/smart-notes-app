@@ -145,6 +145,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
+# Celery configuration
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = None
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
