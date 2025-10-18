@@ -144,3 +144,31 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "celery_file": {
+            "level": "WARNING",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/celery_emails.log",
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 10,
+            "backupCount": 3,
+        },
+    },
+    "loggers": {
+        "email_tasks": {
+            "handlers": ["celery_file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
+}

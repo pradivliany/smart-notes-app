@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import password_reset_token, profile_activation_token
 
 
-def send_activation_email(request, user) -> None:
+def send_activation_email_task(request, user) -> None:
     """
     Generates a unique activation token for the given user and constructs an account
     activation link containing the token and the user's UID.
