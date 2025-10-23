@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
@@ -36,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django_celery_beat",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -122,6 +124,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+CELERY_TIMEZONE = TIME_ZONE
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -162,7 +165,7 @@ LOGGING = {
     },
     "handlers": {
         "celery_file": {
-            "level": "WARNING",
+            "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "logs/celery_emails.log",
             "formatter": "verbose",
@@ -173,8 +176,17 @@ LOGGING = {
     "loggers": {
         "email_tasks": {
             "handlers": ["celery_file"],
-            "level": "WARNING",
+            "level": "INFO",
             "propagate": False,
         },
+    },
+}
+
+
+CELERY_BEAT_SCHEDULE = {
+    "check_deadlines_daily_at_6am_utc": {
+        "task": "notes_app.tasks.check_deadlines_task",
+        "schedule": crontab(minute=0, hour=6),
+        "args": (),
     },
 }

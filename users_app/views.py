@@ -2,13 +2,14 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.db import transaction
 from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 
-from .emails import send_activation_email, send_reset_password_email
-from .forms import (EmailForm, LoginForm, PasswordConfirmForm, ProfileForm,
-                    SignUpForm)
+from .forms import EmailForm, LoginForm, PasswordConfirmForm, ProfileForm, SignUpForm
 from .models import Profile
+from .tasks import send_activation_email_task, send_reset_password_email_task
 from .tokens import password_reset_token, profile_activation_token
 
 
@@ -27,7 +28,13 @@ def signup_user(request):
                 return redirect(to="users_app:login")
 
             user = form.save()
-            send_activation_email(request, user)
+
+            transaction.on_commit(
+                lambda: send_activation_email_task.delay(
+                    user.pk, get_current_site(request).domain
+                )
+            )
+
             messages.success(
                 request, "Please check your email to complete the activation."
             )
@@ -117,8 +124,11 @@ def reset_password(request):
         if form.is_valid():
             user = User.objects.filter(email=form.cleaned_data["email"]).first()
             if user:
-                send_reset_password_email(request, user)
+                send_reset_password_email_task.delay(
+                    user.pk, get_current_site(request).domain
+                )
 
+            messages.success(request, "Please check your email to complete the reset.")
             return redirect(to="users_app:reset_password_done")
         else:
             messages.error(request, "Please enter a valid email address.")
