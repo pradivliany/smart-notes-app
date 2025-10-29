@@ -22,10 +22,20 @@
                         <!-- ToDos switch -->
                         <div class="d-flex align-items-center gap-1">
                             <span class="badge rounded-pill text-bg-light">ToDo?</span>
-                            <a href="{% if note.is_todo %}{% url 'notes_app:note_toggle_todo' note.id %}{% else %}{% url 'notes_app:note_set_deadline' note.id %}{% endif %}"
-                               class="switch mb-0">
-                                <span class="slider {% if note.is_todo %}checked{% endif %}"></span>
-                            </a>
+
+                            {% if note.is_todo %}
+                                <form action="{% url 'notes_app:note_toggle_todo' note.id %}" method="post" class="m-0 p-0">
+                                    {% csrf_token %}
+                                    <label class="switch mb-0">
+                                        <input type="checkbox" name="is_todo" onchange="this.form.submit()" checked>
+                                        <span class="slider checked"></span>
+                                    </label>
+                                </form>
+                            {% else %}
+                                <a href="{% url 'notes_app:note_toggle_todo' note.id %}" class="switch mb-0">
+                                    <span class="slider"></span>
+                                </a>
+                            {% endif %}
                         </div>
 
                         <!-- Completed switch -->

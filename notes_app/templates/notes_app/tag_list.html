@@ -25,7 +25,12 @@
             {% for tag in tags %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="badge bg-secondary">{{ tag.name }}</span>
-                <a href="{% url 'notes_app:tag_delete' tag.id %}" class="btn btn-danger btn-sm">Delete</a>
+                <form method="post" action="{% url 'notes_app:tag_delete' tag.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('are you sure you want to delete tag {{ tag.name }}')">
+                        Delete
+                    </button>
+                </form>
             </li>
             {% endfor %}
         </ul>

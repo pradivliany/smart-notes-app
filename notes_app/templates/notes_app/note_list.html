@@ -2,7 +2,7 @@
 
 {% load custom_filters %}
 
-{% block title %}My Notes{% endblock %}
+{% block title %}My Dashboard{% endblock %}
 
 {% block content %}
 
@@ -33,13 +33,24 @@
                 <div class="card-body d-flex flex-column p-3">
 
                     <div class="d-flex justify-content-between align-items-start mb-2">
+
                         <!-- ToDos switch -->
                         <div class="d-flex align-items-center gap-1">
                             <span class="badge rounded-pill text-bg-light">ToDo?</span>
-                            <a href="{% if note.is_todo %}{% url 'notes_app:note_toggle_todo' note.id %}{% else %}{% url 'notes_app:note_set_deadline' note.id %}{% endif %}"
-                               class="switch mb-0">
-                                <span class="slider {% if note.is_todo %}checked{% endif %}"></span>
-                            </a>
+
+                            {% if note.is_todo %}
+                                <form action="{% url 'notes_app:note_toggle_todo' note.id %}" method="post" class="m-0 p-0">
+                                    {% csrf_token %}
+                                    <label class="switch mb-0">
+                                        <input type="checkbox" name="is_todo" onchange="this.form.submit()" checked>
+                                        <span class="slider checked"></span>
+                                    </label>
+                                </form>
+                            {% else %}
+                                <a href="{% url 'notes_app:note_toggle_todo' note.id %}" class="switch mb-0">
+                                    <span class="slider"></span>
+                                </a>
+                            {% endif %}
                         </div>
 
                         <!-- Completed switch -->
@@ -68,7 +79,7 @@
                     </div>
 
                     <div class="mt-auto text-center">
-                        <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'notes_app:note_detail' note.id %}" class="btn btn-primary btn-sm">View</a>
                     </div>
 
                 </div>
@@ -76,6 +87,44 @@
         </div>
         {% endfor %}
     </div>
+
+    {% if notes.has_other_pages %}
+    <nav aria-label="Notes pagination">
+        <ul class="pagination justify-content-center mt-4">
+            {% if notes.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ notes.previous_page_number }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for num in notes.paginator.page_range %}
+                {% if num == notes.number %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if notes.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ notes.next_page_number }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 
     {% endif %}
 </div>

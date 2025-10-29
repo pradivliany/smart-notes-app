@@ -15,12 +15,22 @@ logger = logging.getLogger("email_tasks")
 def check_deadlines_task():
     curr_time = timezone.now()
     day_from_curr_time = curr_time + timedelta(days=1)
-    notes_to_notify = Note.objects.filter(is_todo=True, deadline__isnull=False, deadline__gt=curr_time,
-                                          deadline__lte=day_from_curr_time)
+    notes_to_notify = Note.objects.filter(
+        is_todo=True,
+        deadline__isnull=False,
+        deadline__gt=curr_time,
+        deadline__lte=day_from_curr_time,
+    )
     if notes_to_notify.exists():
         logger.info(f"Found {notes_to_notify.count()} notes to process")
         for note in notes_to_notify:
             send_notification_task.delay(note.pk)
+
+    notes_to_archive = Note.objects.filter(
+        is_todo=True, deadline__isnull=False, deadline__lt=curr_time
+    )
+    if notes_to_archive.exists():
+        notes_to_archive.update(is_todo=False, deadline=None)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=120)
