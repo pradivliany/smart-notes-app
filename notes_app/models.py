@@ -27,7 +27,6 @@ class Note(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     is_todo = models.BooleanField(default=False)
     deadline = models.DateTimeField(null=True, blank=True)
-    is_expired = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name}"
