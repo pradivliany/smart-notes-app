@@ -43,9 +43,7 @@ def send_activation_email_task(self, user_id: int, domain: str) -> None:
             ],
             fail_silently=False,
         )
-        logger.info(
-            f"Activation email successfully sent to user ID {user_id} ({recipient})."
-        )
+        logger.info(f"Activation email successfully sent to user {recipient}.")
     except Exception as e:
         logger.error(f"Email failed for user {user_id}. Retrying...")
         raise self.retry(exc=e)
@@ -81,9 +79,7 @@ def send_reset_password_email_task(self, user_id: int, domain: str) -> None:
             ],
             fail_silently=False,
         )
-        logger.info(
-            f"Password reset email successfully sent to user ID {user_id} ({recipient})."
-        )
+        logger.info(f"Password reset email successfully sent to user {recipient}.")
     except Exception as e:
         logger.error(f"Email failed for user {user_id}. Retrying...")
         raise self.retry(exc=e)
