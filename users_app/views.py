@@ -8,7 +8,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.http import urlsafe_base64_decode
 
-from .forms import EmailForm, LoginForm, PasswordConfirmForm, ProfileForm, SignUpForm
+from .forms import (EmailForm, LoginForm, PasswordConfirmForm, ProfileForm,
+                    SignUpForm)
 from .models import Profile
 from .tasks import send_activation_email_task, send_reset_password_email_task
 from .tokens import password_reset_token, profile_activation_token
