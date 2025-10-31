@@ -13,35 +13,58 @@ logger = logging.getLogger("email_tasks")
 
 @shared_task
 def check_deadlines_task():
+    """
+    Checks all notes and performs two actions:
+
+    1. Finds notes with a deadline within 24 hours and schedules email reminders.
+    2. Archives notes whose deadlines have already passed.
+    """
     curr_time = timezone.now()
     day_from_curr_time = curr_time + timedelta(days=1)
-    notes_to_notify = Note.objects.filter(
-        is_todo=True,
-        deadline__isnull=False,
-        deadline__gt=curr_time,
-        deadline__lte=day_from_curr_time,
-    )
-    if notes_to_notify.exists():
-        logger.info(f"Found {notes_to_notify.count()} notes to process")
-        for note in notes_to_notify:
-            send_notification_task.delay(note.pk)
 
-    notes_to_archive = Note.objects.filter(
-        is_todo=True, deadline__isnull=False, deadline__lt=curr_time
+    notes = Note.objects.filter(is_todo=True, deadline__isnull=False).select_related(
+        "user"
     )
-    if notes_to_archive.exists():
-        notes_to_archive.update(is_todo=False, deadline=None)
+
+    if not notes:
+        logger.info("No notes with deadlines found.")
+        return
+
+    to_notify, to_archive = [], []
+
+    for note in notes:
+        if note.deadline <= curr_time:
+            to_archive.append(note.pk)
+        elif note.deadline <= day_from_curr_time:
+            to_notify.append(note)
+
+    if to_archive:
+        Note.objects.filter(pk__in=to_archive).update(is_todo=False, deadline=None)
+        logger.info(f"Archived {len(to_archive)} expired to-do notes.")
+
+    if to_notify:
+        logger.info(f"Found {len(to_notify)} to-do notes to process")
+        for note in to_notify:
+            send_notification_task.delay(note.pk)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=120)
 def send_notification_task(self, note_id: int) -> None:
-    note = Note.objects.filter(pk=note_id).first()
+    """
+    Sends an email reminder for an upcoming note deadline.
+    Retries up to 3 times if sending fails.
+    """
+    try:
+        note = Note.objects.select_related("user").get(pk=note_id)
+    except Note.DoesNotExist:
+        logger.warning(f"Note with ID {note_id} not found")
+        return
 
-    if not note or not note.user:
+    if not note.user or not note.user.email:
+        logger.warning(f"Skipping note {note_id}: missing user or email.")
         return
 
     user = note.user
-
     recipient = user.email
     mail_subject = "Reminder: Don't forget about your note"
     message = (

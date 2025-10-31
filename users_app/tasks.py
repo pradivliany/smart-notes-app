@@ -14,6 +14,12 @@ logger = logging.getLogger("email_tasks")
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=120)
 def send_activation_email_task(self, user_id: int, domain: str) -> None:
+    """
+    Sends an activation email with a secure link to verify the user's account.
+
+    This task runs asynchronously via Celery.
+    Retries up to 3 times (every 2 minutes) if sending fails.
+    """
     try:
         user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
@@ -45,12 +51,18 @@ def send_activation_email_task(self, user_id: int, domain: str) -> None:
         )
         logger.info(f"Activation email successfully sent to user {recipient}.")
     except Exception as e:
-        logger.error(f"Email failed for user {user_id}. Retrying...")
+        logger.error(f"Failed to send activation email to user {user_id}. Retrying...")
         raise self.retry(exc=e)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=120)
 def send_reset_password_email_task(self, user_id: int, domain: str) -> None:
+    """
+    Sends a password reset email containing a secure tokenized link.
+
+    This task runs asynchronously via Celery.
+    Retries up to 3 times (every 2 minutes) if sending fails.
+    """
     try:
         user = User.objects.get(pk=user_id)
     except User.DoesNotExist:
@@ -65,8 +77,9 @@ def send_reset_password_email_task(self, user_id: int, domain: str) -> None:
         f"Hello {user.username}, \n\n"
         f"Click the link below to reset your password:\n"
         f"http://{domain}/users/reset_password/confirm/{uid}/{token} \n\n"
-        f"If you did not register, please ignore this email."
-        f"Best regards,\nThe Notes App Team"
+        f"If you did not register, please ignore this email.\n\n"
+        f"Best regards,\n"
+        f"The Notes App Team"
     )
 
     try:
@@ -81,5 +94,5 @@ def send_reset_password_email_task(self, user_id: int, domain: str) -> None:
         )
         logger.info(f"Password reset email successfully sent to user {recipient}.")
     except Exception as e:
-        logger.error(f"Email failed for user {user_id}. Retrying...")
+        logger.error(f"Failed to send reset email to user {user_id}. Retrying...")
         raise self.retry(exc=e)
