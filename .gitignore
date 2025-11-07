@@ -3,6 +3,5 @@ __pycache__/
 .env
 media/
 celerybeat-schedule*
-logs/
 *.log
 *.py[cod]
