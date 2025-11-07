@@ -5,3 +5,4 @@ media/
 celerybeat-schedule*
 *.log
 *.py[cod]
+!.env.example
