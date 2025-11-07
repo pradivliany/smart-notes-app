@@ -1,7 +1,51 @@
+name: notes-app-project
+
 services:
+  web:
+    build: .
+    container_name: django-container
+    ports:
+      - "8000:8000"
+    volumes:
+      - media_data:/app/media
+      - logs_data:/app/logs
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=notes.settings
+    command: >
+      sh -c "poetry run python manage.py migrate --noinput
+      && poetry run python manage.py runserver 0.0.0.0:8000"
+
+  celery_worker:
+    build: .
+    container_name: celery-worker-container
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=notes.settings
+    command: poetry run celery -A notes worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+
+  celery_beat:
+    build: .
+    container_name: celery-beat-container
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=notes.settings
+    command: poetry run celery -A notes beat --loglevel=info
+    depends_on:
+      - db
+      - redis
+
   db:
     image: postgres:15
-    container_name: my-postgres-database
+    container_name: postgres-container
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -10,18 +54,19 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # <name of data storage(volume) on host>:<Path inside container to store data>
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:8-alpine
-    container_name: my-redis-container
+    container_name: redis-container
     restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
 
-
 volumes:
-  postgres_data: # example Windows path: C:\ProgramData\Docker\volumes\postgres_data\_data
+  postgres_data:
   redis_data:
+  media_data:
+  logs_data:

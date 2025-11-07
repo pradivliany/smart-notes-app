@@ -2,9 +2,7 @@ __pycache__/
 .idea/
 .env
 media/
-static/
 *.log
-logs/
 .gitignore
 .git
 docker-compose.yml

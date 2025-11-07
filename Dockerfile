@@ -14,10 +14,10 @@ COPY pyproject.toml poetry.lock ./
 
 RUN pip install --upgrade pip
 RUN pip install poetry
-RUN poetry install --no-dev --no-root --no-interaction
+RUN poetry install --only main --no-root --no-interaction
 
 COPY . /app
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]

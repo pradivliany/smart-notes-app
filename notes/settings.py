@@ -167,7 +167,7 @@ LOGGING = {
         "celery_file": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "logs/celery_emails.log",
+            "filename": "/app/logs/celery_emails.log",
             "formatter": "verbose",
             "maxBytes": 1024 * 1024 * 10,
             "backupCount": 3,
