@@ -7,3 +7,4 @@ media/
 .git
 docker-compose.yml
 Dockerfile
+**/tests/
