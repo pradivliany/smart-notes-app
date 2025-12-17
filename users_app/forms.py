@@ -33,11 +33,13 @@ class SignUpForm(UserCreationForm):
         ),
     )
     email = EmailField(
+        min_length=5,
         max_length=254,
         required=True,
         widget=EmailInput(attrs={"class": "form-control", "placeholder": "Your Email"}),
     )
     password1 = CharField(
+        min_length=8,
         max_length=50,
         required=True,
         widget=PasswordInput(
@@ -45,6 +47,7 @@ class SignUpForm(UserCreationForm):
         ),
     )
     password2 = CharField(
+        min_length=8,
         max_length=50,
         required=True,
         widget=PasswordInput(
@@ -100,6 +103,7 @@ class EmailForm(forms.Form):
 
 class PasswordConfirmForm(forms.Form):
     password1 = CharField(
+        min_length=8,
         max_length=50,
         required=True,
         widget=PasswordInput(
@@ -107,6 +111,7 @@ class PasswordConfirmForm(forms.Form):
         ),
     )
     password2 = CharField(
+        min_length=8,
         max_length=50,
         required=True,
         widget=PasswordInput(

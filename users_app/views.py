@@ -77,8 +77,9 @@ def activate_user(request: HttpRequest, uidb64: str, token: str) -> HttpResponse
         user = None
 
     if user and profile_activation_token.check_token(user, token):
-        user.profile.is_confirmed = True
-        user.profile.save()
+        user_profile, _ = Profile.objects.get_or_create(user=user)
+        user_profile.is_confirmed = True
+        user_profile.save()
         messages.success(
             request,
             "Your account has been activated! Now you can add tags and notes.",
@@ -109,7 +110,8 @@ def login_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
 
-        if not request.user.profile.is_confirmed:
+        user_profile, _ = Profile.objects.get_or_create(user=request.user)
+        if not user_profile.is_confirmed:
             messages.info(request, "Please confirm your email to unlock full features.")
             return redirect(to="users_app:profile")
 
@@ -140,9 +142,9 @@ def edit_profile(request: HttpRequest) -> HttpResponse:
     GET: Shows the form pre-filled with the user's profile data.
     POST: Validates the submitted data and saves changes if valid.
     """
-
+    user_profile, _ = Profile.objects.get_or_create(user=request.user)
     form = ProfileForm(
-        request.POST or None, request.FILES or None, instance=request.user.profile
+        request.POST or None, request.FILES or None, instance=user_profile
     )
 
     if request.method == "POST" and form.is_valid():

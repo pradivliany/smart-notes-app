@@ -8,7 +8,7 @@ class Tag(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     class Meta:
         constraints = [
@@ -29,4 +29,4 @@ class Note(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
