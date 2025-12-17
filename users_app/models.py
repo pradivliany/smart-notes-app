@@ -1,19 +1,23 @@
+import logging
+
 from django.contrib.auth.models import User
 from django.db import models
 from PIL import Image
+
+logger = logging.getLogger("models_errors")
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(
-        default="avatars/default_avatar.jpg", upload_to="avatars/"
+        default="avatars/default_avatar.png", upload_to="avatars/"
     )
-    bio = models.CharField(max_length=500, null=True)
+    bio = models.CharField(max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_confirmed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.username}"
+        return self.user.username
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -26,4 +30,4 @@ class Profile(models.Model):
                     img.thumbnail(max_size)
                     img.save(self.avatar.path)
         except Exception as e:
-            print(f"Error manipulating avatar image: {e}")
+            logger.error(f"Error manipulating avatar image: {e}")

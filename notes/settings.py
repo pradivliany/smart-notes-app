@@ -172,11 +172,24 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 10,
             "backupCount": 3,
         },
+        "models_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "/app/logs/models_errors.log",
+            "formatter": "verbose",
+            "maxBytes": 1024 * 1024 * 10,
+            "backupCount": 3,
+        },
     },
     "loggers": {
         "email_tasks": {
             "handlers": ["celery_file"],
             "level": "INFO",
+            "propagate": False,
+        },
+        "models_errors": {
+            "handlers": ["models_file"],
+            "level": "ERROR",
             "propagate": False,
         },
     },
