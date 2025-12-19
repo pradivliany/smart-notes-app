@@ -1,10 +1,8 @@
 __pycache__/
 .idea/
 .env
-media/
 *.log
 .gitignore
 .git
 docker-compose.yml
 Dockerfile
-**/tests/

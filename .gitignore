@@ -1,8 +1,16 @@
 __pycache__/
 .idea/
 .env
-media/
 celerybeat-schedule*
 *.log
 *.py[cod]
 !.env.example
+
+# ignoring all inside media/
+media/*
+
+# but allowing directory with avatars
+!media/avatars/
+
+# and allowing default avatar
+!media/avatars/default_avatar.png
