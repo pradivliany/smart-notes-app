@@ -6,3 +6,5 @@ __pycache__/
 .git
 docker-compose.yml
 Dockerfile
+README.md
+screenshots/
