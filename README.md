@@ -50,6 +50,7 @@ It goes beyond simple text by offering **ToDo modes, deadline tracking, and auto
    ```
 6. Access the App: Open your browser and navigate to http://127.0.0.1:8000
 
-## 👤 Author: 
+## 👤 Author:
    - GitHub: https://github.com/pradivliany
    - Email: yaroslavpradyvlianyi@gmail.com
+   - LinkedIn: https://www.linkedin.com/in/ing-yaroslav-pradyvlianyi-856618180/ 
